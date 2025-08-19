@@ -1,4 +1,4 @@
-# 🎯 South Korea Activities Guide 2025
+# 🎯 Japan – Steph and Sister's Activities Guide (May 2025)
 
 This repository contains a mobile-friendly, collapsible attractions guide for your 2025 South Korea adventure.  
 It showcases top-rated attractions, markets, tours, and experiences across **Bangkok** and **Phuket**—organised in an intuitive, structured format.
@@ -6,7 +6,7 @@ It showcases top-rated attractions, markets, tours, and experiences across **Ban
 ## ✅ Live Site
 
 Once deployed via GitHub Pages, access the live guide here:  
-**https://tw-south-korea.github.io/GJN-2025-activities/**
+**https://tw-japan.github.io/SP-2025-activities/**
 
 ## ✨ Features
 
