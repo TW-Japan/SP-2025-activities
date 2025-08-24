@@ -1,6 +1,6 @@
-# 🎯 Japan – Steph and Sister's Activities Guide (May 2025)
+# 🎎 Japan Activities Guide 2025
 
-This repository contains a mobile-friendly, collapsible attractions guide for your 2025 South Korea adventure.  
+This repository contains a mobile-friendly, collapsible attractions guide for your 2025 Japan adventure.  
 It showcases top-rated attractions, markets, tours, and experiences across **Bangkok** and **Phuket**—organised in an intuitive, structured format.
 
 ## ✅ Live Site
