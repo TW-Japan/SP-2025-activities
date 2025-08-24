@@ -1,7 +1,7 @@
-# 🎎 Japan Activities Guide 2025
+# 🎎 Japan – Steph and Sarah's Activities Guide 2025
 
-This repository contains a mobile-friendly, collapsible attractions guide for your 2025 Japan adventure.  
-It showcases top-rated attractions, markets, tours, and experiences across **Bangkok** and **Phuket**—organised in an intuitive, structured format.
+This repository contains a mobile-friendly, collapsible attractions guide for Steph and Sarah's 2025 Japan adventure.  
+It showcases top-rated attractions, markets, tours, and experiences across **Osaka** and **Tokyo** — organised in an intuitive, structured format.
 
 ## ✅ Live Site
 
@@ -10,10 +10,10 @@ Once deployed via GitHub Pages, access the live guide here:
 
 ## ✨ Features
 
-* **Collapsible city and destination sections**: Each city (e.g. Bangkok, Phuket) and each destination within them is now independently collapsible
+* **Collapsible city and destination sections**: Each city (e.g. Osaka, Tokyo) and each destination within them is now independently collapsible
 * **Structured formatting** with:
 
-  * Independent destination sections for improved navigation (e.g. “Destination – MBK CENTER”)
+  * Independent destination sections for improved navigation (e.g. “Destination – Osaka”)
   * Clickable attraction links and Google Maps directions
   * Clear time fields (When, Hours, Travel Time)
   * Dual currency support (Price – ฿ / $)
