@@ -2,7 +2,6 @@
   "name": "🎎 Japan – Steph and Sarah's Activities Guide 2025",
   "short_name": "Activities",
   "start_url": "/SP-2025-activities/",
-  "scope": "/SP-2025-activities/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0b3d91",
@@ -18,5 +17,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "scope": "/SP-2025-activities/"
 }
