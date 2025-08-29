@@ -1,73 +1,77 @@
-// service-worker.js (hardened) — network-first for HTML navigations, cache-first for assets
-const CACHE_VERSION = 'v2025-08-26-2'; // bump each deploy
-const CACHE_NAME = `sp-2025-activities-${CACHE_VERSION}`;
-const ORIGIN = self.location.origin;
-const BASE = '/SP-2025-activities';
+/* eslint-disable no-restricted-globals */
+const VERSION = 'v2025-08-30-01';
+const CACHE_NAME = `sp-2025-activities-${VERSION}`;
 
-const PRECACHE_URLS = [
-  `${BASE}/`,
-  `${BASE}/index.html`,
-  `${BASE}/assets/manifest.json`,
-  `${BASE}/assets/icons/icon-192x192.png`,
-  `${BASE}/assets/icons/icon-512x512.png`,
+const APP_SHELL = [
+  '/SP-2025-activities/',
+  '/SP-2025-activities/index.html',
+  '/SP-2025-activities/assets/manifest.json',
+  '/SP-2025-activities/assets/icons/icon-192x192.png',
+  '/SP-2025-activities/assets/icons/icon-512x512.png',
+  '/SP-2025-activities/offline.html',
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    await cache.addAll(PRECACHE_URLS);
-  })());
+self.addEventListener('install', event => {
   self.skipWaiting();
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k => !k.endsWith(CACHE_VERSION)).map(k => caches.delete(k)));
+    await Promise.all(keys.filter(k => k.startsWith('sp-2025-activities-') && k !== CACHE_NAME).map(k => caches.delete(k)));
     await self.clients.claim();
+    const clientsList = await self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
+    for (const client of clientsList) {
+      client.postMessage({ type: 'NEW_VERSION_ACTIVATED', version: VERSION });
+    }
   })());
 });
 
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  // Only handle same-origin requests
-  if (url.origin !== ORIGIN) return;
-
-  // Treat navigations (HTML) as network-first so edits appear immediately
-  if (req.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        const fresh = await fetch(req, { cache: 'no-store' });
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(req, fresh.clone());
-        return fresh;
-      } catch (err) {
-        const cache = await caches.open(CACHE_NAME);
-        // Fallback to cached page or cached index.html
-        return (await cache.match(req)) || (await cache.match(`${BASE}/index.html`));
-      }
-    })());
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirstNavigation(request));
     return;
   }
-
-  // For CSS/JS/images/fonts: cache-first with background refresh
-  event.respondWith((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    const cached = await cache.match(req);
-    if (cached) {
-      fetch(req).then((resp) => {
-        if (resp && resp.ok) cache.put(req, resp.clone());
-      }).catch(() => {});
-      return cached;
-    }
-    try {
-      const resp = await fetch(req);
-      if (resp && resp.ok) cache.put(req, resp.clone());
-      return resp;
-    } catch (err) {
-      return cached || Response.error();
-    }
-  })());
+  const url = new URL(request.url);
+  const sameOrigin = url.origin === self.location.origin;
+  if (sameOrigin) {
+    event.respondWith(staleWhileRevalidate(request));
+    return;
+  }
+  event.respondWith(fetch(request).catch(() => caches.match(request)));
 });
+
+async function networkFirstNavigation(request) {
+  const NETWORK_TIMEOUT_MS = 3500;
+  try {
+    const response = await promiseWithTimeout(fetch(request), NETWORK_TIMEOUT_MS);
+    const cache = await caches.open(CACHE_NAME);
+    cache.put('/SP-2025-activities/index.html', response.clone());
+    return response;
+  } catch (err) {
+    const cached = await caches.match('/SP-2025-activities/index.html') ||
+                   await caches.match('/SP-2025-activities/offline.html');
+    return cached;
+  }
+}
+
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+  const networkFetch = fetch(request).then(response => {
+    if (!response || (!response.ok && response.type !== 'opaque')) return response;
+    cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+  return cached || networkFetch || fetch(request);
+}
+
+function promiseWithTimeout(promise, ms) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error('timeout')), ms);
+  });
+  return Promise.race([promise.finally(() => clearTimeout(timer)), timeout]);
+}
