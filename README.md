@@ -1,4 +1,4 @@
-# 🎎 Japan – Steph and Sarah's Activities Guide 2025
+# 🎎 Japan – Steph and Sarah's Activities Guide (May 2025)
 
 This repository contains a mobile-friendly, collapsible attractions guide for Steph and Sarah's 2025 Japan adventure.  
 It showcases top-rated attractions, markets, tours, and experiences across **Osaka** and **Tokyo** — organised in an intuitive, structured format.
